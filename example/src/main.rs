@@ -4,6 +4,8 @@ use jupiter_swap_api_client::{
     quote::QuoteRequest, swap::SwapRequest, transaction_config::TransactionConfig,
     JupiterSwapApiClient,
 };
+use bincode::config::standard;
+use bincode::serde::decode_from_slice;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::{pubkey, transaction::VersionedTransaction};
 use solana_sdk::{pubkey::Pubkey, signature::NullSigner};
@@ -47,9 +49,11 @@ async fn main() {
         .unwrap();
 
     println!("Raw tx len: {}", swap_response.swap_transaction.len());
-
-    let versioned_transaction: VersionedTransaction =
-        bincode::deserialize(&swap_response.swap_transaction).unwrap();
+    
+    let (versioned_transaction, _len): (VersionedTransaction, usize) =
+        decode_from_slice(&swap_response.swap_transaction, standard())
+            .expect("failed to decode VersionedTransaction");
+    
 
     // Replace with a keypair or other struct implementing signer
     let null_signer = NullSigner::new(&TEST_WALLET);
