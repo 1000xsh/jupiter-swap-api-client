@@ -145,6 +145,7 @@ pub struct InternalQuoteRequest {
     /// Platform fee in basis points
     pub platform_fee_bps: Option<u8>,
     pub dexes: Option<Dexes>,
+    #[serde(rename = "excludeDexes", skip_serializing_if = "Option::is_none")]
     pub excluded_dexes: Option<Dexes>,
     /// Quote only direct routes
     pub only_direct_routes: Option<bool>,
